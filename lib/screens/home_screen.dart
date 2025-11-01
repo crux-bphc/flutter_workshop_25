@@ -1,16 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_workshop_25/theme.dart';
 import 'package:flutter_workshop_25/widgets/spending_graph.dart';
+import 'package:flutter_workshop_25/utils/expense_data_helper.dart';
+import 'package:flutter_workshop_25/models/expense.dart';
+import 'package:flutter_workshop_25/services/hive_service.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    double totalMonthlyExpense = 12400;
-    double weeklyAverage = 3100;
-    double highestSpending = 4200;
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
+class _HomeScreenState extends State<HomeScreen> {
+  double totalMonthlyExpense = 0;
+  double weeklyAverage = 0;
+  double highestSpending = 0;
+  Map<String, double> weeklyData = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadExpenseData();
+  }
+
+  void _loadExpenseData() {
+    setState(() {
+      totalMonthlyExpense = ExpenseDataHelper.getTotalExpense();
+      weeklyAverage = ExpenseDataHelper.getWeeklyAverage();
+      highestSpending = ExpenseDataHelper.getHighestSpending();
+      weeklyData = ExpenseDataHelper.getWeeklyChartData();
+    });
+  }
+
+  Future<void> _addDummyExpense() async {
+    //todo: update this after add expense is done
+    await HiveService.addExpense(
+      Expense(
+        title: "Coffee",
+        amount: (50 + (200 * (DateTime.now().millisecond % 10))).toDouble(),
+        date: DateTime.now(),
+      ),
+    );
+    _loadExpenseData();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Expense Dashboard'),
@@ -123,7 +159,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   const Divider(),
-                  SpendingGraph(),
+                  SpendingGraph(data: weeklyData),
                 ],
               ),
             ),
@@ -132,7 +168,7 @@ class HomeScreen extends StatelessWidget {
       ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: _addDummyExpense,
         child: const Icon(Icons.add),
       ),
     );
