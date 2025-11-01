@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_workshop_25/theme.dart';
+import 'package:flutter_workshop_25/widgets/spending_graph.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -114,7 +115,7 @@ class HomeScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Spending Overview",
+                    "Weekly Spending Overview",
                     style: Theme.of(context).textTheme.titleLarge!.copyWith(
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
@@ -122,8 +123,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   const Divider(),
-                  const SizedBox(height: 12),
-                  //todo: add some graphs for spending overview
+                  SpendingGraph(),
                 ],
               ),
             ),
