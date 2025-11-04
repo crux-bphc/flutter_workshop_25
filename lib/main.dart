@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_workshop_25/models/expense.dart';
 import 'package:flutter_workshop_25/screens/home_screen.dart';
+import 'package:flutter_workshop_25/services/hive_service.dart';
 import 'package:flutter_workshop_25/theme.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -9,7 +10,7 @@ void main() async {
 
   await Hive.initFlutter();
   Hive.registerAdapter(ExpenseAdapter());
-  await Hive.openBox<Expense>('expenses');
+  await HiveService.init();
 
   runApp(const MyApp());
 }
