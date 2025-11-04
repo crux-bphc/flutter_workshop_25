@@ -4,6 +4,7 @@ import 'package:flutter_workshop_25/widgets/spending_graph.dart';
 import 'package:flutter_workshop_25/utils/expense_data_helper.dart';
 import 'package:flutter_workshop_25/models/expense.dart';
 import 'package:flutter_workshop_25/services/hive_service.dart';
+import 'package:flutter_workshop_25/screens/add_expense_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -31,18 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
       highestSpending = ExpenseDataHelper.getHighestSpending();
       weeklyData = ExpenseDataHelper.getWeeklyChartData();
     });
-  }
-
-  Future<void> _addDummyExpense() async {
-    //todo: update this after add expense is done
-    await HiveService.addExpense(
-      Expense(
-        title: "Coffee",
-        amount: (50 + (200 * (DateTime.now().millisecond % 10))).toDouble(),
-        date: DateTime.now(),
-      ),
-    );
-    _loadExpenseData();
   }
 
   @override
@@ -168,7 +157,15 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: _addDummyExpense,
+        onPressed: () {
+          Navigator.of(context)
+              .push(
+                MaterialPageRoute(
+                  builder: (context) => const AddExpenseScreen(),
+                ),
+              )
+              .then((_) => _loadExpenseData());
+        },
         child: const Icon(Icons.add),
       ),
     );
