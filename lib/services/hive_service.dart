@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 import 'package:flutter_workshop_25/models/expense.dart';
 
 class HiveService {
-  static const String expenseBoxName = 'expenses_box';
+  static const String expenseBoxName = 'expenses';
 
   static Future<void> init() async {
     if (!Hive.isAdapterRegistered(0)) {
