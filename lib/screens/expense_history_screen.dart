@@ -20,10 +20,12 @@ class ExpenseHistoryScreen extends StatelessWidget {
               return const Center(child: Text('No expenses yet.'));
             }
 
+            final expenses = box.values.toList().reversed.toList();
+
             return ListView.builder(
-              itemCount: box.values.length,
+              itemCount: expenses.length,
               itemBuilder: (context, index) {
-                final expense = box.getAt(index) as Expense;
+                final expense = expenses[index];
                 return ExpenseTile(
                   title: expense.title,
                   amount: expense.amount,
