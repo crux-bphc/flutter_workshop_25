@@ -33,40 +33,62 @@ class ExpenseDataHelper {
 
   static Map<String, double> getWeeklyChartData({int days = 7}) {
     final now = DateTime.now();
-    final List<DateTime> daysList = List.generate(
-      days,
-      (i) => DateTime(
-        now.year,
-        now.month,
-        now.day,
-      ).subtract(Duration(days: days - 1 - i)),
-    );
+    final today = DateTime(now.year, now.month, now.day);
 
-    final Map<String, double> result = {
-      for (var d in daysList) DateFormat('EEE').format(d): 0.0,
-    };
+    final Map<String, double> result = {};
+
+    for (int i = 0; i < days; i++) {
+      final date = today.subtract(Duration(days: i));
+      result[DateFormat('EEE').format(date)] = 0.0;
+    }
 
     final expenses = getAllExpenses();
-    for (var e in expenses) {
-      final eDate = DateTime(e.date.year, e.date.month, e.date.day);
-      if (!eDate.isBefore(daysList.first) && !eDate.isAfter(daysList.last)) {
-        final label = DateFormat('EEE').format(eDate);
-        result[label] = (result[label] ?? 0) + e.amount;
+    final sevenDaysAgo = today.subtract(Duration(days: days - 1));
+
+    for (var expense in expenses) {
+      final expenseDate = DateTime(
+        expense.date.year,
+        expense.date.month,
+        expense.date.day,
+      );
+      if (!expenseDate.isBefore(sevenDaysAgo)) {
+        final dayKey = DateFormat('EEE').format(expenseDate);
+        if (result.containsKey(dayKey)) {
+          result[dayKey] = (result[dayKey] ?? 0) + expense.amount;
+        }
       }
     }
 
-    return result;
+    final reversedKeys = result.keys.toList().reversed;
+    final finalResult = {for (var k in reversedKeys) k: result[k]!};
+
+    return finalResult;
   }
 
   static double getWeeklyAverage({int days = 7}) {
-    final weekly = getWeeklyChartData(days: days);
-    final total = weekly.values.fold(0.0, (s, v) => s + v);
-    return days > 0 ? total / days : 0.0;
+    final expenses = getAllExpenses();
+    final sevenDaysAgo = DateTime.now().subtract(Duration(days: days));
+
+    final recentExpenses = expenses
+        .where((e) => e.date.isAfter(sevenDaysAgo))
+        .toList();
+
+    if (recentExpenses.isEmpty) return 0.0;
+
+    final total = recentExpenses.fold(0.0, (sum, e) => sum + e.amount);
+    return total / days;
   }
 
   static double getHighestSpending({int days = 7}) {
-    final weekly = getWeeklyChartData(days: days);
-    if (weekly.isEmpty) return 0.0;
-    return weekly.values.reduce((a, b) => a > b ? a : b);
+    final expenses = getAllExpenses();
+    final sevenDaysAgo = DateTime.now().subtract(Duration(days: days));
+
+    final recentExpenses = expenses
+        .where((e) => e.date.isAfter(sevenDaysAgo))
+        .toList();
+
+    if (recentExpenses.isEmpty) return 0.0;
+
+    return recentExpenses.map((e) => e.amount).reduce((a, b) => a > b ? a : b);
   }
 }
