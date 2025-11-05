@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_workshop_25/theme.dart';
 import 'package:flutter_workshop_25/widgets/spending_graph.dart';
 import 'package:flutter_workshop_25/utils/expense_data_helper.dart';
-import 'package:flutter_workshop_25/models/expense.dart';
-import 'package:flutter_workshop_25/services/hive_service.dart';
 import 'package:flutter_workshop_25/screens/add_expense_screen.dart';
+import 'package:flutter_workshop_25/screens/expense_history_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -41,8 +40,15 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Expense Dashboard'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () {},
+            icon: const Icon(Icons.history),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ExpenseHistoryScreen(),
+                ),
+              );
+            },
           ),
         ],
       ),
