@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_workshop_25/models/expense.dart';
-import 'package:flutter_workshop_25/services/hive_service.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_workshop_25/providers/expense_provider.dart';
 
 class AddExpenseScreen extends StatefulWidget {
   const AddExpenseScreen({super.key});
@@ -23,11 +24,12 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   }
 
   Future<void> _pickDate(BuildContext context) async {
+    final DateTime now = DateTime.now();
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
+      initialDate: _selectedDate ?? now,
       firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
+      lastDate: DateTime(now.year, now.month, now.day),
     );
     if (picked != null && picked != _selectedDate) {
       setState(() {
@@ -53,7 +55,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       date: _selectedDate!,
     );
 
-    HiveService.addExpense(newExpense);
+    Provider.of<ExpenseProvider>(context, listen: false).addExpense(newExpense);
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Expense added successfully!')),
@@ -108,12 +110,24 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                           decoration: InputDecoration(
                             labelText: "Title",
                             hintText: "Enter expense title",
+                            prefixIcon: const Icon(Icons.title, color: Colors.teal),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(color: colorScheme.primary, width: 2),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(color: colorScheme.outline, width: 1.5),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(color: colorScheme.primary, width: 2),
                             ),
                             filled: true,
                             fillColor: colorScheme.surfaceContainerHighest,
+                            contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
                           ),
+                          style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
                               return "Please enter a title";
@@ -129,13 +143,24 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                           decoration: InputDecoration(
                             labelText: "Amount",
                             hintText: "Enter amount spent",
-                            prefixText: "₹ ",
+                            prefixIcon: const Icon(Icons.currency_rupee, color: Colors.teal),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(color: colorScheme.primary, width: 2),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(color: colorScheme.outline, width: 1.5),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(color: colorScheme.primary, width: 2),
                             ),
                             filled: true,
                             fillColor: colorScheme.surfaceContainerHighest,
+                            contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
                           ),
+                          style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
                               return "Please enter an amount";
@@ -153,6 +178,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                           child: InputDecorator(
                             decoration: InputDecoration(
                               labelText: "Date",
+                              prefixIcon: const Icon(Icons.calendar_today_rounded, color: Colors.teal),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -172,9 +198,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                                         : colorScheme.onSurface,
                                   ),
                                 ),
-                                Icon(
-                                  Icons.calendar_today_rounded,
-                                  color: colorScheme.primary,
+                                const Icon(
+                                  Icons.arrow_drop_down,
+                                  color: Colors.teal,
                                 ),
                               ],
                             ),

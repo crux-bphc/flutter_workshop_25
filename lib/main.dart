@@ -4,6 +4,8 @@ import 'package:flutter_workshop_25/screens/home_screen.dart';
 import 'package:flutter_workshop_25/services/hive_service.dart';
 import 'package:flutter_workshop_25/theme.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_workshop_25/providers/expense_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,11 +22,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Expense Tracker',
-      debugShowCheckedModeBanner: false,
-      theme: appTheme,
-      home: const HomeScreen(),
+    return ChangeNotifierProvider(
+      create: (_) => ExpenseProvider(),
+      child: MaterialApp(
+        title: 'Expense Tracker',
+        debugShowCheckedModeBanner: false,
+        theme: appTheme,
+        home: const HomeScreen(),
+      ),
     );
   }
 }

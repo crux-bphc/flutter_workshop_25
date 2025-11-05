@@ -91,4 +91,28 @@ class ExpenseDataHelper {
 
     return recentExpenses.map((e) => e.amount).reduce((a, b) => a > b ? a : b);
   }
+
+  static Map<String, double> getExpensesForDateRange(DateTime start, DateTime end) {
+    final expenses = getAllExpenses();
+    final Map<String, double> grouped = {};
+    for (var expense in expenses) {
+      final expenseDate = DateTime(expense.date.year, expense.date.month, expense.date.day);
+      if (!expenseDate.isBefore(start) && !expenseDate.isAfter(end)) {
+        final dayKey = DateFormat('EEE').format(expenseDate); 
+        grouped[dayKey] = (grouped[dayKey] ?? 0) + expense.amount;
+      }
+    }
+    for (int i = 0; i <= end.difference(start).inDays; i++) {
+      final date = start.add(Duration(days: i));
+      final dayKey = DateFormat('EEE').format(date);
+      grouped.putIfAbsent(dayKey, () => 0.0);
+    }
+    final ordered = <String, double>{};
+    for (int i = 0; i <= end.difference(start).inDays; i++) {
+      final date = start.add(Duration(days: i));
+      final dayKey = DateFormat('EEE').format(date);
+      ordered[dayKey] = grouped[dayKey]!;
+    }
+    return ordered;
+  }
 }
