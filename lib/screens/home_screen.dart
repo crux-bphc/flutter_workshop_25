@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_workshop_25/models/expense.dart';
 import 'package:flutter_workshop_25/screens/add_expense_screen.dart';
 import 'package:flutter_workshop_25/screens/expense_history_screen.dart';
-import 'package:flutter_workshop_25/services/hive_service.dart';
 import 'package:flutter_workshop_25/theme.dart';
-import 'package:flutter_workshop_25/utils/expense_data_helper.dart';
 import 'package:flutter_workshop_25/widgets/spending_graph.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter_workshop_25/providers/expense_provider.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,13 +16,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: HiveService.getExpenseBox().listenable(),
-      builder: (context, Box<Expense> box, _) {
-        final totalMonthlyExpense = ExpenseDataHelper.getTotalExpense();
-        final weeklyAverage = ExpenseDataHelper.getWeeklyAverage();
-        final highestSpending = ExpenseDataHelper.getHighestSpending();
-        final weeklyData = ExpenseDataHelper.getWeeklyChartData();
+    return Consumer<ExpenseProvider>(
+      builder: (context, expenseProvider, _) {
+        final totalMonthlyExpense = expenseProvider.totalMonthlyExpense;
+        final weeklyAverage = expenseProvider.weeklyAverage;
+        final highestSpending = expenseProvider.highestSpending;
+        final weeklyData = expenseProvider.getWeeklyChartData();
 
         return Scaffold(
           appBar: AppBar(
@@ -108,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: _buildStatCard(
                         context,
                         icon: Icons.calendar_view_week,
-                        title: "Weekly Avg",
+                        title: "Week Avg",
                         value: "₹${weeklyAverage.toStringAsFixed(0)}",
                       ),
                     ),

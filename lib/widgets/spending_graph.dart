@@ -24,8 +24,17 @@ class SpendingGraph extends StatelessWidget {
           borderData: FlBorderData(show: true),
           gridData: const FlGridData(show: false),
           titlesData: FlTitlesData(
-            leftTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 48, 
+                getTitlesWidget: (value, meta) {
+                  return Text(
+                    value.toInt() == 0 ? '0' : value >= 1000 ? '${(value ~/ 1000)}K' : value.toInt().toString(),
+                    style: const TextStyle(fontSize: 14), 
+                  );
+                },
+              ),
             ),
             rightTitles: const AxisTitles(
               sideTitles: SideTitles(showTitles: false),
